@@ -133,7 +133,6 @@ const makeBooking = async (req, res) => {
 		!no_of_cars ||
 		!no_of_protectees ||
 		!guard_gender ||
-		!add_guide ||
 		!total_price
 	) {
 		return res.status(400).json({

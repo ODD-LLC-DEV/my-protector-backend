@@ -17,6 +17,8 @@ function handleUsersChat(io) {
 		socket.on("send-message", async ({ chat_id, message, receiver_id }) => {
 			console.log({ chat_id, message, receiver_id });
 
+			console.log("ssssssssssssssssss", chat_id);
+
 			console.log(connectedUsers);
 
 			await sendMessageBetweenUsers(chat_id, message, receiver_id, socket);
@@ -62,8 +64,6 @@ function checkAuthMiddleware(socket, next) {
 }
 
 async function sendMessageBetweenUsers(chat_id, message, receiver_id, socket) {
-	let newChatId;
-
 	console.log(socket.id);
 
 	if (!chat_id) {
@@ -113,26 +113,18 @@ async function sendMessageBetweenUsers(chat_id, message, receiver_id, socket) {
 	if (socketId) {
 		socket.to(socketId).emit("receive-message", message);
 
-		const updatedData = {
-			last_msg_seen: true,
-		};
-
-		if (chat_id) {
-			updatedData.last_msg = message;
-			updatedData.last_msg_sent_at = new Date();
-
-			await Chat.update(updatedData, {
+		await Chat.update(
+			{
+				last_msg_seen: true,
+				last_msg: message,
+				last_msg_sent_at: new Date(),
+			},
+			{
 				where: {
 					id: chat_id,
 				},
-			});
-		} else {
-			await Chat.update(updatedData, {
-				where: {
-					id: newChatId,
-				},
-			});
-		}
+			},
+		);
 	} else {
 		if (chat_id) {
 			await Chat.update(
@@ -144,6 +136,19 @@ async function sendMessageBetweenUsers(chat_id, message, receiver_id, socket) {
 				{
 					where: {
 						id: chat_id,
+					},
+				},
+			);
+		} else {
+			await Chat.update(
+				{
+					last_msg: message,
+					last_msg_sent_at: new Date(),
+				},
+				{
+					where: {
+						protector_id: receiver_id,
+						customer_id: socket.userId,
 					},
 				},
 			);
