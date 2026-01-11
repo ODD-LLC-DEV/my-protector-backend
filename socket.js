@@ -68,13 +68,25 @@ async function sendMessageBetweenUsers(chat_id, message, receiver_id, socket) {
 
 	const role = socket.userRole;
 
+	let protector_id, customer_id;
+
+	if (role === "Customer") {
+		customer_id = socket.userId;
+
+		protector_id = receiver_id;
+	} else {
+		customer_id = receiver_id;
+
+		protector_id = socket.userId;
+	}
+
 	if (!chat_id) {
 		newChatId = await sequelize.transaction(async (transaction) => {
 			const [chat] = await Chat.findOrCreate({
 				attributes: ["id"],
 				where: {
-					protector_id: receiver_id,
-					customer_id: socket.userId,
+					protector_id,
+					customer_id,
 				},
 				raw: true,
 				defaults: {
@@ -114,6 +126,7 @@ async function sendMessageBetweenUsers(chat_id, message, receiver_id, socket) {
 
 	// this mean that the user is online
 	if (socketId) {
+		console.log(socketId);
 		socket.to(socketId).emit("receive-message", message);
 
 		await Chat.update(
@@ -125,15 +138,18 @@ async function sendMessageBetweenUsers(chat_id, message, receiver_id, socket) {
 			},
 			{
 				where: {
-					id: chat_id,
+					protector_id,
+					customer_id,
 				},
 			},
 		);
 	} else {
+		console.log(chat_id, "sssssssssssssssss");
+
 		if (chat_id) {
 			await Chat.update(
 				{
-					last_msg_seen: false,
+					last_msg_seen: true,
 					last_msg: message,
 					last_msg_sent_at: new Date(),
 					last_sender: role,
@@ -147,14 +163,15 @@ async function sendMessageBetweenUsers(chat_id, message, receiver_id, socket) {
 		} else {
 			await Chat.update(
 				{
+					last_msg_seen: false,
 					last_msg: message,
 					last_msg_sent_at: new Date(),
 					last_sender: role,
 				},
 				{
 					where: {
-						protector_id: receiver_id,
-						customer_id: socket.userId,
+						protector_id,
+						customer_id,
 					},
 				},
 			);
