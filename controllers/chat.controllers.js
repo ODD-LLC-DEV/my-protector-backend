@@ -27,6 +27,8 @@ const getChatsForProtector = async (req, res) => {
 const getChatMessagesForCustomer = async (req, res) => {
 	const userId = req.userId;
 
+	const userRole = req.userRole;
+
 	const { protector_id } = req.params;
 
 	const messages = await Message.findAll({
@@ -38,6 +40,26 @@ const getChatMessagesForCustomer = async (req, res) => {
 		},
 		order: [["id", "DESC"]],
 	});
+
+	const chatId = messages[0].chat_id;
+
+	const chat = await Chat.findByPk(chatId, {
+		attributes: ["id", "last_sender", "last_msg_seen"],
+		raw: true,
+	});
+
+	if (!chat.last_msg_seen && userRole !== chat.last_sender) {
+		await Chat.update(
+			{
+				last_msg_seen: 1,
+			},
+			{
+				where: {
+					id: chatId,
+				},
+			},
+		);
+	}
 
 	res.status(200).json({ data: messages });
 };
@@ -51,6 +73,24 @@ const getChatMessagesForProtector = async (req, res) => {
 		},
 		order: [["id", "DESC"]],
 	});
+
+	const chat = await Chat.findByPk(id, {
+		attributes: ["id", "last_sender", "last_msg_seen"],
+		raw: true,
+	});
+
+	if (!chat.last_msg_seen && userRole !== chat.last_sender) {
+		await Chat.update(
+			{
+				last_msg_seen: 1,
+			},
+			{
+				where: {
+					id: id,
+				},
+			},
+		);
+	}
 
 	res.status(200).json({ data: messages });
 };

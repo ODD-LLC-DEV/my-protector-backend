@@ -66,6 +66,8 @@ function checkAuthMiddleware(socket, next) {
 async function sendMessageBetweenUsers(chat_id, message, receiver_id, socket) {
 	console.log(socket.id);
 
+	const role = socket.userRole;
+
 	if (!chat_id) {
 		newChatId = await sequelize.transaction(async (transaction) => {
 			const [chat] = await Chat.findOrCreate({
@@ -80,6 +82,7 @@ async function sendMessageBetweenUsers(chat_id, message, receiver_id, socket) {
 					last_msg_sent_at: new Date(),
 					protector_id: receiver_id,
 					customer_id: socket.userId,
+					last_sender: role,
 				},
 				transaction,
 			});
@@ -118,6 +121,7 @@ async function sendMessageBetweenUsers(chat_id, message, receiver_id, socket) {
 				last_msg_seen: true,
 				last_msg: message,
 				last_msg_sent_at: new Date(),
+				last_sender: role,
 			},
 			{
 				where: {
@@ -132,6 +136,7 @@ async function sendMessageBetweenUsers(chat_id, message, receiver_id, socket) {
 					last_msg_seen: false,
 					last_msg: message,
 					last_msg_sent_at: new Date(),
+					last_sender: role,
 				},
 				{
 					where: {
@@ -144,6 +149,7 @@ async function sendMessageBetweenUsers(chat_id, message, receiver_id, socket) {
 				{
 					last_msg: message,
 					last_msg_sent_at: new Date(),
+					last_sender: role,
 				},
 				{
 					where: {

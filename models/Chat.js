@@ -9,6 +9,10 @@ const Chat = sequelize.define(
 			type: DataTypes.STRING,
 			allowNull: false,
 		},
+		last_sender: {
+			type: DataTypes.ENUM("Guard", "Customer", "Driver", "Translator"),
+			allowNull: false,
+		},
 		last_msg_seen: {
 			type: DataTypes.BOOLEAN,
 			defaultValue: false,
