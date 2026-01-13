@@ -6,6 +6,12 @@ const Booking = require("./Booking");
 const GuardBooking = sequelize.define(
 	"Guard_Booking",
 	{
+		id: {
+			type: DataTypes.INTEGER({ unsigned: true }),
+			allowNull: false,
+			autoIncrement: true,
+			primaryKey: true,
+		},
 		guard_id: {
 			type: DataTypes.INTEGER,
 			allowNull: false,

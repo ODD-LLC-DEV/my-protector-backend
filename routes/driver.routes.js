@@ -1,5 +1,6 @@
 const { Router } = require("express");
 const {
+	getCarsForBooking,
 	fillDriverData,
 	fillCarData,
 	changeDriverStatus,
@@ -12,6 +13,8 @@ const checkRole = require("../middlewares/check-role");
 const router = Router();
 
 const multer = configMulter("drivers-images");
+
+router.get("/cars", getCarsForBooking);
 
 router.post("/", uploadMiddleware(multer.single("image")), fillDriverData);
 

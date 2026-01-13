@@ -18,6 +18,7 @@ const driverRoutes = require("./routes/driver.routes.js");
 const translatorRoutes = require("./routes/translator.routes.js");
 const chatRoutes = require("./routes/chat.routes.js");
 const userRoutes = require("./routes/user.routes.js");
+const guideRoutes = require("./routes/guide.routes.js");
 
 const app = express();
 const server = createServer(app);
@@ -44,6 +45,7 @@ app.use("/api/drivers", driverRoutes);
 app.use("/api/translators", translatorRoutes);
 app.use("/api/chats", checkAuth, chatRoutes);
 app.use("/api/users", checkAuth, userRoutes);
+app.use("/api/guides", guideRoutes);
 
 createSocketIoServer(server);
 

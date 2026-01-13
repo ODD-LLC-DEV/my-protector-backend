@@ -35,6 +35,10 @@ const CarData = sequelize.define(
 				return `${process.env.BASE_URL}/api/${value}`;
 			},
 		},
+		price: {
+			type: DataTypes.MEDIUMINT({ unsigned: true }),
+			allowNull: false,
+		},
 		driver_id: {
 			type: DataTypes.INTEGER,
 			allowNull: false,
@@ -46,6 +50,7 @@ const CarData = sequelize.define(
 	},
 	{
 		timestamps: false,
+		indexes: [{ fields: ["driver_id"], unique: true }],
 	},
 );
 

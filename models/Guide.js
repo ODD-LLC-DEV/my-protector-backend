@@ -1,9 +1,8 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/db");
-const User = require("./User");
 
-const Driver = sequelize.define(
-	"Driver",
+const Guide = sequelize.define(
+	"Guide",
 	{
 		gender: {
 			type: DataTypes.ENUM("Male", "Female"),
@@ -12,19 +11,6 @@ const Driver = sequelize.define(
 		age: {
 			type: DataTypes.TINYINT({ unsigned: true }),
 			allowNull: false,
-		},
-		weight: {
-			type: DataTypes.FLOAT(5, 2),
-			allowNull: false,
-		},
-		height: {
-			type: DataTypes.FLOAT(5, 2),
-			allowNull: false,
-		},
-		status: {
-			type: DataTypes.ENUM("ACCEPTED", "REJECTED", "PENDING"),
-			allowNull: false,
-			defaultValue: "PENDING",
 		},
 		image_link: {
 			type: DataTypes.STRING,
@@ -35,11 +21,20 @@ const Driver = sequelize.define(
 				return `${process.env.BASE_URL}/api/${value}`;
 			},
 		},
+		status: {
+			type: DataTypes.ENUM("ACCEPTED", "REJECTED", "PENDING"),
+			allowNull: false,
+			defaultValue: "PENDING",
+		},
+		price: {
+			type: DataTypes.MEDIUMINT({ unsigned: true }),
+			allowNull: false,
+		},
 		user_id: {
 			type: DataTypes.INTEGER,
 			allowNull: false,
 			references: {
-				model: User,
+				model: "Users",
 				key: "id",
 			},
 		},
@@ -50,4 +45,4 @@ const Driver = sequelize.define(
 	},
 );
 
-module.exports = Driver;
+module.exports = Guide;

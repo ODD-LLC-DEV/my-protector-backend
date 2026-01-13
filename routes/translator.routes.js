@@ -1,5 +1,6 @@
 const { Router } = require("express");
 const {
+	getTranslatorsForBooking,
 	fillTranslatorData,
 	changeTranslatorStatus,
 } = require("../controllers/translator.conrollers");
@@ -11,6 +12,8 @@ const checkRole = require("../middlewares/check-role");
 const router = Router();
 
 const multer = configMulter("translator-files", "pdf");
+
+router.get("/for-booking", getTranslatorsForBooking);
 
 router.post(
 	"/",

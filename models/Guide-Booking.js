@@ -1,10 +1,10 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/db");
-const Driver = require("./Driver");
+const Guide = require("./Guide");
 const Booking = require("./Booking");
 
-const DriverBooking = sequelize.define(
-	"Driver_Booking",
+const GuideBooking = sequelize.define(
+	"Guide_Booking",
 	{
 		id: {
 			type: DataTypes.INTEGER({ unsigned: true }),
@@ -12,11 +12,11 @@ const DriverBooking = sequelize.define(
 			autoIncrement: true,
 			primaryKey: true,
 		},
-		driver_id: {
+		guide_id: {
 			type: DataTypes.INTEGER,
 			allowNull: false,
 			references: {
-				model: Driver,
+				model: Guide,
 				key: "id",
 			},
 		},
@@ -34,4 +34,4 @@ const DriverBooking = sequelize.define(
 	},
 );
 
-module.exports = DriverBooking;
+module.exports = GuideBooking;

@@ -1,5 +1,7 @@
 const { Router } = require("express");
 const {
+	getGuardsForBooking,
+	getGuardVideo,
 	fillGuardData,
 	changeGuardStatus,
 } = require("../controllers/guard.controllers");
@@ -11,6 +13,10 @@ const checkRole = require("../middlewares/check-role");
 const router = Router();
 
 const multer = configMulter("guards-videos", "videos");
+
+router.get("/for-booking", getGuardsForBooking);
+
+router.get("/:user_id/video", getGuardVideo);
 
 router.post("/", uploadMiddleware(multer.single("video")), fillGuardData);
 

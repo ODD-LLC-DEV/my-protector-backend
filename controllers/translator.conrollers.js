@@ -1,5 +1,32 @@
 const CustomError = require("../config/custom-error");
 const Translator = require("../models/Translator");
+const User = require("../models/User");
+const createSearchFilterForProtectors = require("../utils/create-search-filter");
+
+const getTranslatorsForBooking = async (req, res) => {
+	const { pickup_date, protection_duration } = req.query;
+
+	const translatorSearchFilter = await createSearchFilterForProtectors(
+		pickup_date,
+		protection_duration,
+		"Translator",
+	);
+
+	translatorSearchFilter.status = "ACCEPTED";
+
+	const translators = await User.findAll({
+		attributes: ["name"],
+		include: {
+			model: Translator,
+			where: translatorSearchFilter,
+			attributes: {
+				exclude: ["user_id", "status"],
+			},
+		},
+	});
+
+	res.status(200).json({ data: translators });
+};
 
 const fillTranslatorData = async (req, res) => {
 	const { gender, age, languages, user_id } = req.body || {};
@@ -36,26 +63,27 @@ const changeTranslatorStatus = async (req, res) => {
 
 	const translator = await Translator.findByPk(translator_id, {});
 
-	// if (!translator) {
-	// 	return res.status(404).json({ message: "Translator not found" });
-	// }
+	if (!translator) {
+		return res.status(404).json({ message: "Translator not found" });
+	}
 
-	// await Translator.update(
-	// 	{
-	// 		status,
-	// 	},
-	// 	{
-	// 		where: {
-	// 			id: translator_id,
-	// 		},
-	// 	},
-	// );
+	await Translator.update(
+		{
+			status,
+		},
+		{
+			where: {
+				id: translator_id,
+			},
+		},
+	);
 	res.status(200).json({
-		message: translator,
+		message: "Translator status updated successfully",
 	});
 };
 
 module.exports = {
+	getTranslatorsForBooking,
 	fillTranslatorData,
 	changeTranslatorStatus,
 };

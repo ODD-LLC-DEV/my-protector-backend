@@ -41,6 +41,10 @@ const Booking = sequelize.define(
 			type: DataTypes.STRING,
 			allowNull: false,
 		},
+		pickup_end_date: {
+			type: DataTypes.DATEONLY,
+			allowNull: false,
+		},
 		dress_code: {
 			type: DataTypes.STRING,
 			allowNull: false,
@@ -68,12 +72,12 @@ const Booking = sequelize.define(
 			type: DataTypes.BOOLEAN,
 			allowNull: false,
 		},
-		translator_lang: {
-			type: DataTypes.STRING,
-		},
 		add_guide: {
 			type: DataTypes.BOOLEAN,
 			allowNull: false,
+		},
+		translator_lang: {
+			type: DataTypes.STRING,
 		},
 		total_price: {
 			type: DataTypes.MEDIUMINT({ unsigned: true }),

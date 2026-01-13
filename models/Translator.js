@@ -18,7 +18,9 @@ const Translator = sequelize.define(
 			get() {
 				const languages = this.getDataValue("languages");
 
-				return JSON.parse(languages);
+				if (languages) {
+					return JSON.parse(languages);
+				}
 			},
 		},
 		cv_link: {
@@ -44,6 +46,10 @@ const Translator = sequelize.define(
 			allowNull: false,
 			defaultValue: "PENDING",
 		},
+		price: {
+			type: DataTypes.MEDIUMINT({ unsigned: true }),
+			allowNull: false,
+		},
 		user_id: {
 			type: DataTypes.INTEGER,
 			allowNull: false,
@@ -55,6 +61,7 @@ const Translator = sequelize.define(
 	},
 	{
 		timestamps: false,
+		indexes: [{ fields: ["user_id"], unique: true }],
 	},
 );
 

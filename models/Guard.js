@@ -33,6 +33,9 @@ const Guard = sequelize.define(
 			allowNull: false,
 			defaultValue: "PENDING",
 		},
+		price: {
+			type: DataTypes.MEDIUMINT({ unsigned: true }),
+		},
 		user_id: {
 			type: DataTypes.INTEGER,
 			allowNull: false,
@@ -44,6 +47,7 @@ const Guard = sequelize.define(
 	},
 	{
 		timestamps: false,
+		indexes: [{ fields: ["user_id"], unique: true }],
 	},
 );
 

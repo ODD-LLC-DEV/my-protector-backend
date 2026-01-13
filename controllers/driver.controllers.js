@@ -1,6 +1,38 @@
 const CarData = require("../models/Car-Data");
 const Driver = require("../models/Driver");
 const CustomError = require("../config/custom-error");
+const createSearchFilterForProtectors = require("../utils/create-search-filter.js");
+
+const getCarsForBooking = async (req, res) => {
+	const { pickup_date, protection_duration } = req.query;
+
+	const carSearchFilter = await createSearchFilterForProtectors(
+		pickup_date,
+		protection_duration,
+		"Driver",
+	);
+
+	const users = await Driver.findAll({
+		where: {
+			status: "ACCEPTED",
+		},
+		attributes: [],
+		include: {
+			model: CarData,
+			where: carSearchFilter,
+			attributes: [
+				"brand",
+				"model",
+				"model_year",
+				"car_image_link",
+				"driver_id",
+				"price",
+			],
+		},
+	});
+
+	res.status(200).json({ data: users });
+};
 
 const fillDriverData = async (req, res) => {
 	const { gender, age, weight, height, user_id } = req.body || {};
@@ -82,6 +114,7 @@ const changeDriverStatus = async (req, res) => {
 };
 
 module.exports = {
+	getCarsForBooking,
 	fillDriverData,
 	fillCarData,
 	changeDriverStatus,

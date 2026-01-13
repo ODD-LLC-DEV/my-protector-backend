@@ -1,14 +1,17 @@
 const Booking = require("./Booking");
+const CarData = require("./Car-Data");
 const Chat = require("./Chat");
 const Driver = require("./Driver");
 const DriverBooking = require("./Driver-Booking");
 const Guard = require("./Guard");
 const GuardBooking = require("./Guard-Booking");
+const Guide = require("./Guide");
 const Message = require("./Message");
 const PasswordReset = require("./Password-Reset");
 const Translator = require("./Translator");
 const TranslatorBooking = require("./Translator-Booking");
 const User = require("./User");
+const GuideBooking = require("./Guide-Booking");
 
 function setRelationships() {
 	User.hasOne(PasswordReset, { foreignKey: "user_id" });
@@ -118,6 +121,36 @@ function setRelationships() {
 
 	User.hasMany(Chat, { foreignKey: "protector_id", as: "protector_chats" });
 	Chat.belongsTo(User, { foreignKey: "protector_id", as: "protector" });
+
+	// ========================================================================
+
+	Driver.hasOne(CarData, { foreignKey: "driver_id" });
+	CarData.belongsTo(Driver, { foreignKey: "driver_id" });
+
+	// ========================================================================
+
+	User.hasOne(Guide, { foreignKey: "user_id" });
+	Guide.belongsTo(User, { foreignKey: "user_id" });
+
+	// ========================================================================
+
+	Guide.belongsToMany(Booking, {
+		through: {
+			model: GuideBooking,
+			unique: false,
+		},
+		foreignKey: "guide_id",
+		otherKey: "booking_id",
+	});
+
+	Booking.belongsToMany(Guide, {
+		through: {
+			model: GuideBooking,
+			unique: false,
+		},
+		foreignKey: "booking_id",
+		otherKey: "guide_id",
+	});
 }
 
 module.exports = setRelationships;

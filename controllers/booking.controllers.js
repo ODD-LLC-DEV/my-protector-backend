@@ -5,6 +5,13 @@ const Guard = require("../models/Guard");
 const Translator = require("../models/Translator");
 const User = require("../models/User");
 const { Op } = require("sequelize");
+const calculatePickupEndDate = require("../utils/calculate-pickup-end-date");
+const bulkCreateWithBooking = require("../utils/bulk-create-with-booking");
+const GuardBooking = require("../models/Guard-Booking");
+const DriverBooking = require("../models/Driver-Booking");
+const GuideBooking = require("../models/Guide-Booking");
+const TranslatorBooking = require("../models/Translator-Booking");
+const Guide = require("../models/Guide");
 
 const getBookingsForCustomer = async (req, res) => {
 	const userId = req.userId;
@@ -16,11 +23,12 @@ const getBookingsForCustomer = async (req, res) => {
 				{ "$Guards.id$": { [Op.ne]: null } },
 				{ "$Drivers.id$": { [Op.ne]: null } },
 				{ "$Translators.id$": { [Op.ne]: null } },
+				{ "$Guides.id$": { [Op.ne]: null } },
 			],
 		},
 		subQuery: false,
 		order: [["id", "DESC"]],
-		attributes: [], // better keep at least booking id
+		attributes: [],
 		include: [
 			{
 				model: Guard,
@@ -44,6 +52,16 @@ const getBookingsForCustomer = async (req, res) => {
 			},
 			{
 				model: Translator,
+				required: false,
+				attributes: ["id"],
+				through: { attributes: [] },
+				include: {
+					model: User,
+					attributes: ["id", "name", "image_link"],
+				},
+			},
+			{
+				model: Guide,
 				required: false,
 				attributes: ["id"],
 				through: { attributes: [] },
@@ -113,9 +131,13 @@ const makeBooking = async (req, res) => {
 		no_of_protectees,
 		guard_gender,
 		add_translator,
-		translator_lang,
 		add_guide,
+		translator_lang,
 		total_price,
+		guard_ids,
+		car_ids,
+		translator_ids,
+		guide_ids,
 	} = req.body;
 
 	if (
@@ -142,26 +164,66 @@ const makeBooking = async (req, res) => {
 
 	const userId = req.userId;
 
-	await Booking.create({
-		pickup_country,
-		pickup_city,
-		pickup_street,
-		pickup_building_number,
-		pickup_longitude,
-		pickup_latitude,
-		pickup_date,
-		pickup_time,
+	const pickupEndDate = calculatePickupEndDate(
 		protection_duration,
-		dress_code,
-		no_of_guards,
-		no_of_cars,
-		no_of_protectees,
-		guard_gender,
-		add_translator,
-		translator_lang,
-		add_guide,
-		total_price,
-		user_id: userId,
+		pickup_date,
+	);
+
+	await sequelize.transaction(async (transaction) => {
+		const booking = await Booking.create(
+			{
+				pickup_country,
+				pickup_city,
+				pickup_street,
+				pickup_building_number,
+				pickup_longitude,
+				pickup_latitude,
+				pickup_date,
+				pickup_time,
+				protection_duration,
+				pickup_end_date: pickupEndDate,
+				dress_code,
+				no_of_guards,
+				no_of_cars,
+				no_of_protectees,
+				guard_gender,
+				add_translator,
+				add_guide,
+				translator_lang,
+				total_price,
+				user_id: userId,
+			},
+			{ transaction },
+		);
+
+		await bulkCreateWithBooking(
+			GuardBooking,
+			booking.id,
+			guard_ids,
+			"guard_id",
+			transaction,
+		);
+		await bulkCreateWithBooking(
+			DriverBooking,
+			booking.id,
+			car_ids,
+			"driver_id",
+			transaction,
+		);
+		await bulkCreateWithBooking(
+			GuideBooking,
+			booking.id,
+			guide_ids,
+			"guide_id",
+			transaction,
+		);
+		await bulkCreateWithBooking(
+			TranslatorBooking,
+			booking.id,
+			translator_ids,
+			"translator_id",
+			transaction,
+		);
 	});
 
 	res.status(201).json({
