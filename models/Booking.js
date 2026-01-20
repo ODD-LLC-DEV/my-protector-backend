@@ -37,10 +37,6 @@ const Booking = sequelize.define(
 			type: DataTypes.TIME,
 			allowNull: false,
 		},
-		protection_duration: {
-			type: DataTypes.STRING,
-			allowNull: false,
-		},
 		pickup_end_date: {
 			type: DataTypes.DATEONLY,
 			allowNull: false,

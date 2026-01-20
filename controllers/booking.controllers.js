@@ -5,7 +5,6 @@ const Guard = require("../models/Guard");
 const Translator = require("../models/Translator");
 const User = require("../models/User");
 const { Op } = require("sequelize");
-const calculatePickupEndDate = require("../utils/calculate-pickup-end-date");
 const bulkCreateWithBooking = require("../utils/bulk-create-with-booking");
 const GuardBooking = require("../models/Guard-Booking");
 const DriverBooking = require("../models/Driver-Booking");
@@ -125,6 +124,7 @@ const makeBooking = async (req, res) => {
 		pickup_date,
 		pickup_time,
 		protection_duration,
+		end_date,
 		dress_code,
 		no_of_guards,
 		no_of_cars,
@@ -149,11 +149,8 @@ const makeBooking = async (req, res) => {
 		!pickup_latitude ||
 		!pickup_date ||
 		!pickup_time ||
-		!protection_duration ||
+		!end_date ||
 		!dress_code ||
-		!no_of_guards ||
-		!no_of_cars ||
-		!no_of_protectees ||
 		!guard_gender ||
 		!total_price
 	) {
@@ -163,11 +160,6 @@ const makeBooking = async (req, res) => {
 	}
 
 	const userId = req.userId;
-
-	const pickupEndDate = calculatePickupEndDate(
-		protection_duration,
-		pickup_date,
-	);
 
 	await sequelize.transaction(async (transaction) => {
 		const booking = await Booking.create(
@@ -180,8 +172,7 @@ const makeBooking = async (req, res) => {
 				pickup_latitude,
 				pickup_date,
 				pickup_time,
-				protection_duration,
-				pickup_end_date: pickupEndDate,
+				pickup_end_date: end_date,
 				dress_code,
 				no_of_guards,
 				no_of_cars,

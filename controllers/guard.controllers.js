@@ -2,6 +2,7 @@ const Guard = require("../models/Guard");
 const fs = require("node:fs");
 const User = require("../models/User");
 const createSearchFilterForProtectors = require("../utils/create-search-filter.js");
+const CustomeError = require("../config/custom-error.js");
 
 const getGuardsForBooking = async (req, res) => {
 	const { gender, pickup_date, protection_duration } = req.query;
@@ -46,18 +47,20 @@ const getGuardVideo = async (req, res) => {
 
 	const { Range } = req.headers;
 
-	const guard = await Guard.findOne({
-		where: {
-			user_id,
-		},
+	const guard = await Guard.findByPk(user_id, {
 		attributes: ["video_link"],
 	});
+
+	if (!guard) {
+		throw new CustomeError("Guard Not Found", 404);
+	}
 
 	// const videoPath = path.join(__dirname, guard.video_link);
 
 	const { size } = await fs.promises.stat(guard.video_link);
 
 	if (Range) {
+		console.log("ssssssssssssssss");
 		// Parse the range header
 		const parts = Range.replace(/bytes=/, "").split("-");
 		const start = parseInt(parts[0], 10);

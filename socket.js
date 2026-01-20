@@ -6,9 +6,7 @@ const Message = require("./models/Message.js");
 
 const connectedUsers = new Map();
 
-function handleUsersChat(io) {
-	io.use(checkAuthMiddleware);
-
+function handleUsersConnection(io) {
 	io.on("connection", (socket) => {
 		const userId = socket.userId;
 
@@ -23,6 +21,8 @@ function handleUsersChat(io) {
 
 			await sendMessageBetweenUsers(chat_id, message, receiver_id, socket);
 		});
+
+		socket.on("send-live-location");
 
 		socket.on("disconnect", () => {
 			console.log(`${socket.userRole} ${userId} disconnect`);
@@ -40,7 +40,9 @@ function createSocketIoServer(server) {
 		// },
 	});
 
-	handleUsersChat(io);
+	io.use(checkAuthMiddleware);
+
+	handleUsersConnection(io);
 }
 
 function checkAuthMiddleware(socket, next) {

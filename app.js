@@ -10,6 +10,7 @@ const sequelize = require("./config/db.js");
 const errorHandler = require("./middlewares/error.js");
 const { checkAuth } = require("./middlewares/auth.js");
 const createSocketIoServer = require("./socket.js");
+const checkRole = require("./middlewares/check-role.js");
 
 const authRoutes = require("./routes/auth.routes.js");
 const guardRoutes = require("./routes/guard.routes.js");
@@ -19,6 +20,7 @@ const translatorRoutes = require("./routes/translator.routes.js");
 const chatRoutes = require("./routes/chat.routes.js");
 const userRoutes = require("./routes/user.routes.js");
 const guideRoutes = require("./routes/guide.routes.js");
+const customerRoutes = require("./routes/customer.routes.js");
 
 const app = express();
 const server = createServer(app);
@@ -46,6 +48,7 @@ app.use("/api/translators", translatorRoutes);
 app.use("/api/chats", checkAuth, chatRoutes);
 app.use("/api/users", checkAuth, userRoutes);
 app.use("/api/guides", guideRoutes);
+app.use("/api/customers", checkAuth, checkRole("Customer"), customerRoutes);
 
 createSocketIoServer(server);
 

@@ -121,6 +121,7 @@ const loginUser = async (req, res) => {
 		token,
 		role: user.role,
 		image_link: user.image_link,
+		user_id: user.id,
 	});
 };
 
