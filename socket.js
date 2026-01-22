@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const sequelize = require("./config/db.js");
 const Chat = require("./models/Chat.js");
 const Message = require("./models/Message.js");
-const emitter = require("./config/db.js");
+const emitter = require("./config/event-emitter.js");
 
 const connectedUsers = new Map();
 
@@ -24,7 +24,9 @@ function handleUsersConnection(io) {
 		});
 
 		if (socket.userRole === "Customer") {
-			const locationData = socket.to(socket.id).emit("send-live-location");
+			emitter.on("send-live-data", (data) => {
+				const locationData = socket.to(socket.id).emit("send-live-location");
+			});
 		}
 
 		socket.on("disconnect", () => {

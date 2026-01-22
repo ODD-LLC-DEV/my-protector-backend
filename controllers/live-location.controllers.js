@@ -7,9 +7,12 @@ const Translator = require("../models/Translator");
 const User = require("../models/User");
 const { Op } = require("sequelize");
 const getDataFromRedis = require("../utils/get-data-from-redis");
+const emitter = require("../config/event-emitter");
 
 const getLiveLocations = async (req, res) => {
 	const userId = req.userId;
+
+	console.log("ssssssssssssssssssssssssssss");
 
 	const today = new Date().toLocaleString("en-US", {
 		timeZone: "Africa/Cairo",
@@ -18,12 +21,6 @@ const getLiveLocations = async (req, res) => {
 	const bookings = await Booking.findAll({
 		where: {
 			user_id: userId,
-			pickup_date: {
-				[Op.gte]: today,
-			},
-			pickup_end_date: {
-				[Op.lte]: today,
-			},
 		},
 		attributes: ["id"],
 		include: [
@@ -105,13 +102,22 @@ const saveLivelocation = async (req, res) => {
 
 	console.log(req.body);
 
+	const date = new Date().toLocaleString("en-US", {
+		timeZone: "Africa/Cairo",
+	});
+
 	const user = await User.findByPk(userId, {
 		attributes: ["id", "name"],
 		raw: true,
 	});
 
-	const date = new Date().toLocaleString("en-US", {
-		timeZone: "Africa/Cairo",
+	emitter.emit("send-live-data", {
+		user_id: userId,
+		latitude,
+		longitude,
+		role: req.userRole,
+		date,
+		name: user.name,
 	});
 
 	await redisClient.hset(`${userRole}:${protectorId}`, {
