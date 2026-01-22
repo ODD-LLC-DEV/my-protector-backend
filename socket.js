@@ -32,6 +32,8 @@ function handleUsersConnection(io) {
 		socket.on("disconnect", () => {
 			console.log(`${socket.userRole} ${userId} disconnect`);
 
+			emitter.off();
+
 			connectedUsers.delete(userId);
 		});
 	});

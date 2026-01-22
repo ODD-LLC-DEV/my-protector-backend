@@ -21,6 +21,12 @@ const getLiveLocations = async (req, res) => {
 	const bookings = await Booking.findAll({
 		where: {
 			user_id: userId,
+			[Op.or]: [
+				{ "$Guards.id$": { [Op.ne]: null } },
+				{ "$Drivers.id$": { [Op.ne]: null } },
+				{ "$Translators.id$": { [Op.ne]: null } },
+				{ "$Guides.id$": { [Op.ne]: null } },
+			],
 		},
 		attributes: ["id"],
 		include: [
