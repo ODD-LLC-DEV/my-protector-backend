@@ -21,6 +21,7 @@ const chatRoutes = require("./routes/chat.routes.js");
 const userRoutes = require("./routes/user.routes.js");
 const guideRoutes = require("./routes/guide.routes.js");
 const customerRoutes = require("./routes/customer.routes.js");
+const liveLocationRoutes = require("./routes/live-location.routes.js");
 
 const app = express();
 const server = createServer(app);
@@ -49,6 +50,7 @@ app.use("/api/chats", checkAuth, chatRoutes);
 app.use("/api/users", checkAuth, userRoutes);
 app.use("/api/guides", guideRoutes);
 app.use("/api/customers", checkAuth, checkRole("Customer"), customerRoutes);
+app.use("/api/live-locations", checkAuth, liveLocationRoutes);
 
 createSocketIoServer(server);
 
