@@ -28,9 +28,6 @@ const getBookingsForCustomer = async (req, res) => {
 				{ "$Translators.id$": { [Op.ne]: null } },
 				{ "$Guides.id$": { [Op.ne]: null } },
 			],
-			pickup_date: {
-				[Op.gte]: today,
-			},
 			pickup_end_date: {
 				[Op.lte]: today,
 			},
