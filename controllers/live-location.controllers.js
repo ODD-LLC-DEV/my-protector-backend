@@ -122,6 +122,8 @@ const saveLivelocation = async (req, res) => {
 		user_id: userId,
 	});
 
+	console.log(await redisClient.hgetall(`${userRole}:${protectorId}`));
+
 	res.status(201).json({ message: "Location Stored Successfully" });
 };
 

@@ -3,7 +3,7 @@ const redisClient = require("../config/redis-client");
 const User = require("../models/User");
 
 async function getDataFromRedis(role, id) {
-	const data = await redisClient.hget(`${role}:${id}`);
+	const data = await redisClient.hgetall(`${role}:${id}`);
 
 	console.log(data);
 
