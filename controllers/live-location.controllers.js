@@ -14,10 +14,6 @@ const getLiveLocations = async (req, res) => {
 
 	console.log("ssssssssssssssssssssssssssss");
 
-	const today = new Date().toLocaleString("en-US", {
-		timeZone: "Africa/Cairo",
-	});
-
 	const bookings = await Booking.findAll({
 		where: {
 			user_id: userId,
@@ -28,35 +24,32 @@ const getLiveLocations = async (req, res) => {
 				{ "$Guides.id$": { [Op.ne]: null } },
 			],
 		},
-		attributes: ["id"],
+		subQuery: false,
+		attributes: [],
 		include: [
 			{
 				model: Guard,
+				required: false,
 				attributes: ["id"],
-				through: {
-					attributes: [],
-				},
-			},
-			{
-				model: Translator,
-				attributes: ["id"],
-				through: {
-					attributes: [],
-				},
+				through: { attributes: [] },
 			},
 			{
 				model: Driver,
+				required: false,
 				attributes: ["id"],
-				through: {
-					attributes: [],
-				},
+				through: { attributes: [] },
+			},
+			{
+				model: Translator,
+				required: false,
+				attributes: ["id"],
+				through: { attributes: [] },
 			},
 			{
 				model: Guide,
+				required: false,
 				attributes: ["id"],
-				through: {
-					attributes: [],
-				},
+				through: { attributes: [] },
 			},
 		],
 	});
