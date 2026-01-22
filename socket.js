@@ -22,6 +22,8 @@ function handleUsersConnection(io) {
 			await sendMessageBetweenUsers(chat_id, message, receiver_id, socket);
 		});
 
+		socket.emit("send-live-location");
+
 		socket.on("disconnect", () => {
 			console.log(`${socket.userRole} ${userId} disconnect`);
 

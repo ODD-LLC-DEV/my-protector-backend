@@ -15,6 +15,10 @@ const Guide = require("../models/Guide");
 const getBookingsForCustomer = async (req, res) => {
 	const userId = req.userId;
 
+	const today = new Date().toLocaleString("en-US", {
+		timeZone: "Africa/Cairo",
+	});
+
 	const bookings = await Booking.findAll({
 		where: {
 			user_id: userId,
@@ -24,6 +28,12 @@ const getBookingsForCustomer = async (req, res) => {
 				{ "$Translators.id$": { [Op.ne]: null } },
 				{ "$Guides.id$": { [Op.ne]: null } },
 			],
+			pickup_date: {
+				[Op.gte]: today,
+			},
+			pickup_end_date: {
+				[Op.lte]: today,
+			},
 		},
 		subQuery: false,
 		order: [["id", "DESC"]],
