@@ -12,13 +12,13 @@ const getLiveLocations = async (req, res) => {
 		`SELECT protector_id, role FROM (
     SELECT DB.driver_id AS protector_id, 'Driver' AS role FROM Bookings AS B LEFT JOIN Driver_Bookings AS DB ON DB.booking_id = B.id 
 WHERE B.user_id = ${userId}
-UNION ALL
+UNION
 SELECT GB.guard_id AS protector_id, 'Guard' AS role FROM Bookings AS B LEFT JOIN Guard_Bookings AS GB ON GB.booking_id = B.id 
 WHERE B.user_id =${userId}
-UNION ALL
+UNION
 SELECT GU.guide_id AS protector_id, 'Guide' AS role FROM Bookings AS B LEFT JOIN Guide_Bookings AS GU ON GU.booking_id = B.id 
 WHERE B.user_id = ${userId}
-UNION ALL
+UNION
 SELECT TB.translator_id AS protector_id, 'Translator' AS role FROM Bookings AS B LEFT JOIN Translator_Bookings AS TB ON TB.booking_id = B.id 
 WHERE B.user_id = ${userId} ) AS User_Bookings
 WHERE protector_id IS NOT NULL;`,
