@@ -7,7 +7,7 @@ async function getDataFromRedis(role, id) {
 
 	console.log(data);
 
-	if (Object.keys.length === 0) {
+	if (Object.keys(data).length === 0) {
 		const user = await sequelize.models[role].findByPk(id, {
 			attributes: [],
 			include: {
