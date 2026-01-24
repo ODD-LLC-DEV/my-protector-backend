@@ -31,7 +31,7 @@ function handleUsersConnection(io) {
 			emitter.on("send-live-data", (data) => {
 				console.log("111111111111111111111111111111111111111");
 
-				socket.to(socket.id).emit("send-live-location", data);
+				socket.emit("send-live-location", data);
 			});
 
 			console.log(
