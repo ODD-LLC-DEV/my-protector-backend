@@ -32,29 +32,21 @@ WHERE protector_id IS NOT NULL;`,
 
 	for (const booking of bookings) {
 		if (booking.role === "Guard") {
-			for (const guard of booking.Guards) {
-				guards.push(await getDataFromRedis("Guard", guard.protector_id));
-			}
+			guards.push(await getDataFromRedis("Guard", booking.protector_id));
 		}
 
 		if (booking.role === "Guide") {
-			for (const guide of booking.Guides) {
-				guides.push(await getDataFromRedis("Guide", guide.protector_id));
-			}
+			guides.push(await getDataFromRedis("Guide", booking.protector_id));
 		}
 
 		if (booking.role === "Translator") {
-			for (const translator of booking.Translators) {
-				translators.push(
-					await getDataFromRedis("Translator", translator.protector_id),
-				);
-			}
+			translators.push(
+				await getDataFromRedis("Translator", booking.protector_id),
+			);
 		}
 
 		if (booking.role === "Driver") {
-			for (const driver of booking.Drivers) {
-				drivers.push(await getDataFromRedis("Driver", driver.protector_id));
-			}
+			drivers.push(await getDataFromRedis("Driver", booking.protector_id));
 		}
 	}
 
