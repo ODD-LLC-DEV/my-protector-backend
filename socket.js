@@ -37,12 +37,12 @@ function handleUsersConnection(io) {
 		socket.on("disconnect", () => {
 			console.log(`${socket.userRole} ${userId} disconnect`);
 
-			emitter.off("send-live-data");
-
-			console.log(
-				"events listeners count",
-				emitter.listenerCount("send-live-data"),
-			);
+			emitter.removeListener("send-live-data", () => {
+				console.log(
+					"events listeners count",
+					emitter.listenerCount("send-live-data"),
+				);
+			});
 
 			connectedUsers.delete(userId);
 		});
