@@ -23,8 +23,14 @@ function handleUsersConnection(io) {
 			await sendMessageBetweenUsers(chat_id, message, receiver_id, socket);
 		});
 
+		console.log(socket.userRole);
+
 		if (socket.userRole === "Customer") {
+			console.log("ssssssssssss");
+
 			emitter.on("send-live-data", (data) => {
+				console.log("111111111111111111111111111111111111111");
+
 				socket.to(socket.id).emit("send-live-location", data);
 			});
 
