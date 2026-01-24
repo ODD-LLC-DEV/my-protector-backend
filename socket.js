@@ -25,14 +25,24 @@ function handleUsersConnection(io) {
 
 		if (socket.userRole === "Customer") {
 			emitter.on("send-live-data", (data) => {
-				const locationData = socket.to(socket.id).emit("send-live-location");
+				socket.to(socket.id).emit("send-live-location", data);
 			});
+
+			console.log(
+				"events listeners count",
+				emitter.listenerCount("send-live-data"),
+			);
 		}
 
 		socket.on("disconnect", () => {
 			console.log(`${socket.userRole} ${userId} disconnect`);
 
-			emitter.off();
+			emitter.off("send-live-data");
+
+			console.log(
+				"events listeners count",
+				emitter.listenerCount("send-live-data"),
+			);
 
 			connectedUsers.delete(userId);
 		});
