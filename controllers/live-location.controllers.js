@@ -4,6 +4,7 @@ const { QueryTypes } = require("sequelize");
 const getDataFromRedis = require("../utils/get-data-from-redis");
 const emitter = require("../config/event-emitter");
 const sequelize = require("../config/db");
+const getCustomersIdsForEmittingLiveLocations = require("../utils/get-customers-ids");
 
 const getLiveLocations = async (req, res) => {
 	const userId = req.userId;
@@ -75,6 +76,11 @@ const saveLivelocation = async (req, res) => {
 		raw: true,
 	});
 
+	const customers = await getCustomersIdsForEmittingLiveLocations(
+		protectorId,
+		userRole,
+	);
+
 	emitter.emit("send-live-data", {
 		user_id: userId,
 		latitude,
@@ -82,6 +88,7 @@ const saveLivelocation = async (req, res) => {
 		role: req.userRole,
 		date,
 		name: user.name,
+		customers,
 	});
 
 	await redisClient.hset(`${userRole}:${protectorId}`, {
