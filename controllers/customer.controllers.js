@@ -4,6 +4,8 @@ const sendNotification = require("../utils/send-notification");
 const sendAlertNotification = async (req, res) => {
 	const { protector_id } = req.body;
 
+	const userId = req.userId;
+
 	if (!protector_id) {
 		return res.status(400).json({ message: "Protector Id is Required" });
 	}
@@ -12,7 +14,7 @@ const sendAlertNotification = async (req, res) => {
 		attributes: ["email"],
 	});
 
-	const customer = await User.findByPk(protector_id, {
+	const customer = await User.findByPk(userId, {
 		attributes: ["phone_number"],
 		raw: true,
 	});
