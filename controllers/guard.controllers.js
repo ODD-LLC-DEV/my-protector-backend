@@ -5,17 +5,13 @@ const createSearchFilterForProtectors = require("../utils/create-search-filter.j
 const CustomeError = require("../config/custom-error.js");
 
 const getGuardsForBooking = async (req, res) => {
-	const { gender, pickup_date, protection_duration } = req.query;
+	const { pickup_date, protection_duration } = req.query;
 
 	const guardSearchFilter = await createSearchFilterForProtectors(
 		pickup_date,
 		protection_duration,
 		"Guard",
 	);
-
-	if (gender) {
-		guardSearchFilter.gender = gender;
-	}
 
 	guardSearchFilter.status = "ACCEPTED";
 
