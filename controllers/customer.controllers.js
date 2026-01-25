@@ -17,7 +17,7 @@ const sendAlertNotification = async (req, res) => {
 		return res.status(404).json({ message: "User Not Found" });
 	}
 
-	await sendNotification("Test", "tetaoafokamforkaowfrk");
+	await sendNotification("Test", "tetaoafokamforkaowfrk", protector.email);
 
 	res.status(200).json({ message: "Notification is Sent Successfully" });
 };

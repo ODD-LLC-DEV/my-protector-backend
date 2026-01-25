@@ -7,7 +7,7 @@ const configuration = OneSignal.createConfiguration({
 
 const client = new OneSignal.DefaultApi(configuration);
 
-const sendNotification = async (title, body, ...phone_numbers) => {
+const sendNotification = async (title, body, ...emails) => {
 	try {
 		const notification = new OneSignal.Notification();
 		notification.app_id = process.env.ONE_SIGNAL_APP_ID;
@@ -30,14 +30,14 @@ const sendNotification = async (title, body, ...phone_numbers) => {
 		// to send to a specific user
 		notification.target_channel = "push";
 
-		// notification.include_aliases = {
-		// 	external_id: phone_numbers,
-		// };
+		notification.include_aliases = {
+			external_id: emails,
+		};
 
-		// to all users
-		if (phone_numbers.length === 0) {
-			notification.included_segments = ["All"];
-		}
+		// // to all users
+		// if (emails.length === 0) {
+		// 	notification.included_segments = ["All"];
+		// }
 
 		const response = await client.createNotification(notification);
 
