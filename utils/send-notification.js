@@ -24,7 +24,11 @@ const sendNotification = async (title, body, data, ...emails) => {
 		};
 
 		if (data) {
-			notification.data = data;
+			notification.data = {
+				phone_number: "0111111111111111",
+				latitude: "30.12",
+				longitude: "23.5",
+			};
 		}
 
 		// to send to a specific user
