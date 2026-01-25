@@ -226,6 +226,8 @@ const makeBooking = async (req, res) => {
 		const job = new BookingJob();
 
 		await job.init(end_date, pickup_time, booking.id, transaction);
+
+		console.log(job.jobs);
 	});
 
 	res.status(201).json({
