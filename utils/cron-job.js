@@ -22,6 +22,8 @@ class BookingJob {
 
 		this.jobs.set(booking_id, newJob);
 
+		console.log(formatedDate);
+
 		if (transaction) {
 			await this.saveTheCronJob(formatedDate, booking_id, transaction);
 		}
