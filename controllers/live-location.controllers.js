@@ -100,7 +100,7 @@ const saveLivelocation = async (req, res) => {
 			name: user.name,
 			user_id: userId,
 		})
-		.ttl(redisKey, 24 * 60 * 60) // 24 hours
+		.expire(redisKey, 24 * 60 * 60) // 24 hours
 		.exec();
 
 	res.status(201).json({ message: "Location Stored Successfully" });
