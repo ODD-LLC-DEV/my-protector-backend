@@ -20,11 +20,10 @@ class BookingJob {
 			onTick: async () => {
 				await this.bookingCronFunction(booking_id);
 			},
+			start: true,
 		});
 
 		this.jobs.set(booking_id, newJob);
-
-		console.log(formatedDate);
 
 		if (transaction) {
 			await this.saveTheCronJob(formatedDate, booking_id, transaction);

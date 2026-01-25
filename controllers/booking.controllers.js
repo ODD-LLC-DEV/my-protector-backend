@@ -16,10 +16,6 @@ const BookingJob = require("../utils/cron-job");
 const getBookingsForCustomer = async (req, res) => {
 	const userId = req.userId;
 
-	const today = new Date().toLocaleString("en-US", {
-		timeZone: "Africa/Cairo",
-	});
-
 	const bookings = await Booking.findAll({
 		where: {
 			user_id: userId,
