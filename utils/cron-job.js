@@ -9,12 +9,11 @@ class BookingJob {
 	}
 
 	async init(date, time, booking_id, transaction) {
-		const formatedDate = new Date(`${date} ${time}`).toLocaleDateString(
-			"en-US",
-			{
-				timeZone: "Africa/Cairo",
-			},
-		);
+		const formatedDate = new Date(`${date} ${time}`);
+
+		formatedDate.toLocaleString("en-US", {
+			timeZone: "Africa/Cairo",
+		});
 
 		const newJob = CronJob.from({
 			cronTime: `${formatedDate.getMinutes()} ${formatedDate.getHours()} ${formatedDate.getDate()} ${formatedDate.getMonth() + 1} *`,
