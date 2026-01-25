@@ -15,7 +15,7 @@ const sendAlertNotification = async (req, res) => {
 	});
 
 	const customer = await User.findByPk(userId, {
-		attributes: ["phone_number"],
+		attributes: ["name", "phone_number"],
 		raw: true,
 	});
 
@@ -24,8 +24,8 @@ const sendAlertNotification = async (req, res) => {
 	}
 
 	await sendNotification(
-		"Test",
-		"tetaoafokamforkaowfrk",
+		"Urgent Potential Danger Detected",
+		`${customer.name} needs you`,
 		customer.phone_number,
 		protector.email,
 	);
