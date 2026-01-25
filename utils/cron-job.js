@@ -49,7 +49,7 @@ class BookingJob {
 			});
 		});
 
-		const job = this.jobs.get(data.booking_id);
+		const job = this.jobs.get(booking_id);
 
 		await job.stop();
 	}
