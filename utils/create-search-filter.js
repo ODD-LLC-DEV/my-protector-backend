@@ -28,6 +28,7 @@ async function createSearchFilterForProtectors(
 						[Op.and]: [
 							{ pickup_date: { [Op.lte]: pickupEndDate } },
 							{ pickup_end_date: { [Op.gte]: pickup_date } },
+							{ status: "Pending" },
 						],
 					},
 				},
