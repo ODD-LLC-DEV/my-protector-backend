@@ -10,8 +10,6 @@ async function getCustomersIdsForEmittingLiveLocations(protector_id, role) {
 		},
 	});
 
-	console.log(protector.toJSON());
-
 	return protector.Bookings;
 }
 

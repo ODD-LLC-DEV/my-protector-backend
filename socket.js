@@ -23,32 +23,29 @@ function handleUsersConnection(io) {
 			await sendMessageBetweenUsers(chat_id, message, receiver_id, socket);
 		});
 
-		if (socket.userRole === "Customer") {
-			emitter.once("send-live-data", (data) => {
-				const customer = data.customers.find(
-					(c) => c.user_id === socket.userId,
-				);
+		const handlerForSendLiveLocation = (data) => {
+			const customer = data.customers.find((c) => c.user_id === socket.userId);
 
-				if (customer) {
-					socket.emit("send-live-location", data);
-				}
-			});
+			if (customer) {
+				delete data.customers;
+
+				socket.emit("send-live-location", data);
+			}
 
 			console.log(
 				"events listeners count",
 				emitter.listenerCount("send-live-data"),
 			);
+		};
+
+		if (socket.userRole === "Customer") {
+			emitter.on("send-live-data", handlerForSendLiveLocation);
 		}
 
 		socket.on("disconnect", () => {
 			console.log(`${socket.userRole} ${userId} disconnect`);
 
-			emitter.removeListener("send-live-data", () => {
-				console.log(
-					"events listeners count",
-					emitter.listenerCount("send-live-data"),
-				);
-			});
+			emitter.off("send-live-data", handlerForSendLiveLocation);
 
 			connectedUsers.delete(userId);
 		});

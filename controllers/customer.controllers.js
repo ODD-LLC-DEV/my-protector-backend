@@ -27,8 +27,6 @@ const sendAlertNotification = async (req, res) => {
 	res.status(200).json({ message: "Notification is Sent Successfully" });
 };
 
-const getLastCordinatestOfProtectors = async (req, res) => {};
-
 module.exports = {
 	sendAlertNotification,
 };
