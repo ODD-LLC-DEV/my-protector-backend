@@ -21,6 +21,7 @@ class BookingJob {
 				await this.bookingCronFunction(booking_id);
 			},
 			start: true,
+			timeZone: "Africa/Cairo",
 		});
 
 		this.jobs.set(booking_id, newJob);
