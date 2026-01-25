@@ -23,7 +23,7 @@ const getBookingsForCustomer = async (req, res) => {
 	const bookings = await Booking.findAll({
 		where: {
 			user_id: userId,
-			status: "Finished",
+			status: "Pending",
 			[Op.or]: [
 				{ "$Guards.id$": { [Op.ne]: null } },
 				{ "$Drivers.id$": { [Op.ne]: null } },
@@ -90,7 +90,7 @@ const getBookingsForProtector = async (req, res) => {
 
 	if (date) {
 		searchFilter.pickup_date = date;
-		searchFilter.status = "Finished";
+		searchFilter.status = "Pending";
 	}
 
 	const guard = await sequelize.models[userRole].findByPk(protectorId, {

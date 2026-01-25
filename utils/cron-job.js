@@ -17,7 +17,10 @@ class BookingJob {
 
 		const newJob = CronJob.from({
 			cronTime: `${formatedDate.getMinutes()} ${formatedDate.getHours()} ${formatedDate.getDate()} ${formatedDate.getMonth() + 1} *`,
-			onTick: this.bookingCronFunction(booking_id),
+			onTick: async () => {
+				await this.bookingCronFunction(booking_id);
+			},
+			start: true,
 		});
 
 		this.jobs.set(booking_id, newJob);
