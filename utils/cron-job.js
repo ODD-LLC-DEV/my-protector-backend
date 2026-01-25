@@ -1,0 +1,69 @@
+const { CronJob } = require("cron");
+const BookingCronJob = require("../models/Booking-Cron-Job");
+const Booking = require("../models/Booking");
+const sequelize = require("../config/db");
+
+class BookingJob {
+	constructor() {
+		this.jobs = new Map();
+	}
+
+	async init(date, time, booking_id, transaction) {
+		const formatedDate = new Date(`${date} ${time}`).toLocaleDateString(
+			"en-US",
+			{
+				timeZone: "Africa/Cairo",
+			},
+		);
+
+		const newJob = CronJob.from({
+			cronTime: `${formatedDate.getMinutes()} ${formatedDate.getHours()} ${formatedDate.getDate()} ${formatedDate.getMonth() + 1} *`,
+			onTick: this.bookingCronFunction(booking_id),
+		});
+
+		this.jobs.set(booking_id, newJob);
+
+		await this.saveTheCronJob(formatedDate, booking_id, transaction);
+	}
+
+	async bookingCronFunction(booking_id) {
+		await sequelize.transaction(async (transaction) => {
+			await Booking.update(
+				{
+					status: "Finished",
+				},
+				{
+					where: {
+						id: booking_id,
+					},
+					transaction,
+				},
+			);
+
+			await BookingCronJob.destroy({
+				where: {
+					booking_id: booking_id,
+				},
+				transaction,
+			});
+		});
+
+		const job = this.jobs.get(data.booking_id);
+
+		await job.stop();
+	}
+
+	async saveTheCronJob(date, booking_id, transaction) {
+		await BookingCronJob.create(
+			{
+				cron_date: date,
+				booking_id: booking_id,
+			},
+			{
+				transaction,
+			},
+		);
+	}
+}
+
+module.exports = BookingJob;

@@ -11,6 +11,7 @@ const DriverBooking = require("../models/Driver-Booking");
 const GuideBooking = require("../models/Guide-Booking");
 const TranslatorBooking = require("../models/Translator-Booking");
 const Guide = require("../models/Guide");
+const BookingJob = require("../utils/cron-job");
 
 const getBookingsForCustomer = async (req, res) => {
 	const userId = req.userId;
@@ -219,6 +220,10 @@ const makeBooking = async (req, res) => {
 			"translator_id",
 			transaction,
 		);
+
+		const job = new BookingJob();
+
+		await job.init(end_date, pickup_time, booking.id, transaction);
 	});
 
 	res.status(201).json({

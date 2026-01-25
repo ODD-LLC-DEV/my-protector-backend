@@ -75,6 +75,11 @@ const Booking = sequelize.define(
 		translator_lang: {
 			type: DataTypes.STRING,
 		},
+		status: {
+			type: DataTypes.ENUM("Pending", "Finished"),
+			allowNull: false,
+			defaultValue: "Pending",
+		},
 		total_price: {
 			type: DataTypes.MEDIUMINT({ unsigned: true }),
 			allowNull: false,
