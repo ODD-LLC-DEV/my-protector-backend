@@ -65,8 +65,6 @@ const saveLivelocation = async (req, res) => {
 		});
 	}
 
-	console.log(req.body);
-
 	const date = new Date().toLocaleString("en-US", {
 		timeZone: "Africa/Cairo",
 	});
@@ -91,15 +89,19 @@ const saveLivelocation = async (req, res) => {
 		customers,
 	});
 
-	await redisClient.hset(`${userRole}:${protectorId}`, {
-		longitude,
-		latitude,
-		date,
-		name: user.name,
-		user_id: userId,
-	});
+	const redisKey = `${userRole}:${protectorId}`;
 
-	console.log(await redisClient.hgetall(`${userRole}:${protectorId}`));
+	await redisClient
+		.multi()
+		.hset(redisKey, {
+			longitude,
+			latitude,
+			date,
+			name: user.name,
+			user_id: userId,
+		})
+		.ttl(redisKey, 24 * 60 * 60) // 24 hours
+		.exec();
 
 	res.status(201).json({ message: "Location Stored Successfully" });
 };
