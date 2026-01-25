@@ -23,7 +23,9 @@ class BookingJob {
 
 		this.jobs.set(booking_id, newJob);
 
-		await this.saveTheCronJob(formatedDate, booking_id, transaction);
+		if (transaction) {
+			await this.saveTheCronJob(formatedDate, booking_id, transaction);
+		}
 	}
 
 	async bookingCronFunction(booking_id) {
@@ -63,6 +65,16 @@ class BookingJob {
 				transaction,
 			},
 		);
+	}
+
+	async createJobsAfterRestart() {
+		const jobs = await BookingCronJob.findAll({
+			raw: true,
+		});
+
+		for (const job of jobs) {
+			await this.init(job.cron_date, job.booking_id, undefined);
+		}
 	}
 }
 

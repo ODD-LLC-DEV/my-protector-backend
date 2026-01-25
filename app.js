@@ -11,6 +11,7 @@ const errorHandler = require("./middlewares/error.js");
 const { checkAuth } = require("./middlewares/auth.js");
 const createSocketIoServer = require("./socket.js");
 const checkRole = require("./middlewares/check-role.js");
+const BookingJob = require("./utils/cron-job.js");
 
 const authRoutes = require("./routes/auth.routes.js");
 const guardRoutes = require("./routes/guard.routes.js");
@@ -65,6 +66,10 @@ sequelize
 
 		// creates the tables
 		await sequelize.sync();
+
+		const job = new BookingJob();
+
+		await job.createJobsAfterRestart();
 
 		server.listen(port, () => {
 			console.log(`>>> server is listening on port ${port}`);
