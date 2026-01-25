@@ -23,11 +23,11 @@ const sendNotification = async (title, body, data, ...emails) => {
 			en: title,
 		};
 
-		// if (data) {
-		// 	notification.data = {
-		// 		phone_number: data,
-		// 	};
-		// }
+		if (data) {
+			notification.data = {
+				phone_number: data,
+			};
+		}
 
 		// to send to a specific user
 		notification.target_channel = "push";

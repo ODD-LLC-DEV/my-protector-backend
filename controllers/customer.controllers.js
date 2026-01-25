@@ -10,6 +10,10 @@ const sendAlertNotification = async (req, res) => {
 
 	const protector = await User.findByPk(protector_id, {
 		attributes: ["email"],
+	});
+
+	const customer = await User.findByPk(protector_id, {
+		attributes: ["phone_number"],
 		raw: true,
 	});
 
@@ -20,7 +24,7 @@ const sendAlertNotification = async (req, res) => {
 	await sendNotification(
 		"Test",
 		"tetaoafokamforkaowfrk",
-		"testtttttttttttttttt",
+		customer.phone_number,
 		protector.email,
 	);
 
