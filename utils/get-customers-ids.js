@@ -7,6 +7,9 @@ async function getCustomersIdsForEmittingLiveLocations(protector_id, role) {
 		include: {
 			model: Booking,
 			attributes: ["user_id"],
+			where: {
+				status: "Pending",
+			},
 		},
 	});
 
