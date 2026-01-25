@@ -62,7 +62,7 @@ class BookingJob {
 	async saveTheCronJob(date, booking_id, transaction) {
 		await BookingCronJob.create(
 			{
-				cron_date: date,
+				job_date: date,
 				booking_id: booking_id,
 			},
 			{
