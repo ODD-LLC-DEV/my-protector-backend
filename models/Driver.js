@@ -26,15 +26,6 @@ const Driver = sequelize.define(
 			allowNull: false,
 			defaultValue: "PENDING",
 		},
-		image_link: {
-			type: DataTypes.STRING,
-			allowNull: false,
-			get() {
-				const value = this.getDataValue("image_link");
-
-				return `${process.env.BASE_URL}/api/${value}`;
-			},
-		},
 		user_id: {
 			type: DataTypes.INTEGER,
 			allowNull: false,

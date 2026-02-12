@@ -1,9 +1,11 @@
 const { Router } = require("express");
 const {
 	getCarsForBooking,
+	getAllDriversForAdmin,
+	getDriverDetails,
 	fillDriverData,
 	fillCarData,
-	changeDriverStatus,
+	changeDriverStatusOrPrice,
 } = require("../controllers/driver.controllers");
 const configMulter = require("../config/multer");
 const uploadMiddleware = require("../middlewares/upload");
@@ -13,6 +15,10 @@ const checkRole = require("../middlewares/check-role");
 const router = Router();
 
 const multer = configMulter("drivers-images");
+
+router.get("/", getAllDriversForAdmin);
+
+router.get("/by-id/:id", getDriverDetails);
 
 router.get("/cars", getCarsForBooking);
 
@@ -29,6 +35,6 @@ router.post(
 	fillCarData,
 );
 
-router.patch("/status", checkAuth, checkRole("ADMIN"), changeDriverStatus);
+router.patch("/", checkAuth, checkRole("ADMIN"), changeDriverStatusOrPrice);
 
 module.exports = router;

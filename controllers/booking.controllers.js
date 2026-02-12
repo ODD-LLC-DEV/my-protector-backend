@@ -116,6 +116,21 @@ const getBookingsForProtector = async (req, res) => {
 	res.status(200).json({ data: guard ? guard.Bookings : [] });
 };
 
+const getUserBookingsForAdmin = async (req, res) => {
+	const { id } = req.params;
+
+	const bookings = await Booking.findAll({
+		where: {
+			user_id: id,
+		},
+		attributes: {
+			exclude: ["user_id"],
+		},
+	});
+
+	res.status(200).json({ data: bookings });
+};
+
 const makeBooking = async (req, res) => {
 	const {
 		pickup_country,
@@ -126,7 +141,6 @@ const makeBooking = async (req, res) => {
 		pickup_latitude,
 		pickup_date,
 		pickup_time,
-		protection_duration,
 		end_date,
 		dress_code,
 		no_of_guards,
@@ -222,8 +236,6 @@ const makeBooking = async (req, res) => {
 		const job = new BookingJob();
 
 		await job.init(end_date, pickup_time, booking.id, transaction);
-
-		console.log(job.jobs);
 	});
 
 	res.status(201).json({
@@ -234,5 +246,6 @@ const makeBooking = async (req, res) => {
 module.exports = {
 	getBookingsForCustomer,
 	getBookingsForProtector,
+	getUserBookingsForAdmin,
 	makeBooking,
 };

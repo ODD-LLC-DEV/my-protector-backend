@@ -1,6 +1,19 @@
 const User = require("../models/User");
 const sendNotification = require("../utils/send-notification");
 
+const getAllCustomersForAdmin = async (_req, res) => {
+	const customers = await User.findAll({
+		where: {
+			role: "CUSTOMER",
+		},
+		attributes: {
+			exclude: ["role", "password"],
+		},
+	});
+
+	res.status(200).json({ data: customers });
+};
+
 const sendAlertNotification = async (req, res) => {
 	const { protector_id } = req.body;
 
@@ -34,5 +47,6 @@ const sendAlertNotification = async (req, res) => {
 };
 
 module.exports = {
+	getAllCustomersForAdmin,
 	sendAlertNotification,
 };

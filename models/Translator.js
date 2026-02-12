@@ -26,20 +26,6 @@ const Translator = sequelize.define(
 		cv_link: {
 			type: DataTypes.STRING,
 			allowNull: false,
-			get() {
-				const value = this.getDataValue("cv_link");
-
-				return `${process.env.BASE_URL}/api/${value}`;
-			},
-		},
-		image_link: {
-			type: DataTypes.STRING,
-			allowNull: false,
-			get() {
-				const value = this.getDataValue("image_link");
-
-				return `${process.env.BASE_URL}/api/${value}`;
-			},
 		},
 		status: {
 			type: DataTypes.ENUM("ACCEPTED", "REJECTED", "PENDING"),
@@ -48,7 +34,6 @@ const Translator = sequelize.define(
 		},
 		price: {
 			type: DataTypes.MEDIUMINT({ unsigned: true }),
-			allowNull: false,
 		},
 		user_id: {
 			type: DataTypes.INTEGER,

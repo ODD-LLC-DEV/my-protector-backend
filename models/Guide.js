@@ -12,15 +12,6 @@ const Guide = sequelize.define(
 			type: DataTypes.TINYINT({ unsigned: true }),
 			allowNull: false,
 		},
-		image_link: {
-			type: DataTypes.STRING,
-			allowNull: false,
-			get() {
-				const value = this.getDataValue("image_link");
-
-				return `${process.env.BASE_URL}/api/${value}`;
-			},
-		},
 		status: {
 			type: DataTypes.ENUM("ACCEPTED", "REJECTED", "PENDING"),
 			allowNull: false,
@@ -28,7 +19,6 @@ const Guide = sequelize.define(
 		},
 		price: {
 			type: DataTypes.MEDIUMINT({ unsigned: true }),
-			allowNull: false,
 		},
 		user_id: {
 			type: DataTypes.INTEGER,

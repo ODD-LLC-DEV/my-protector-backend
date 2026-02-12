@@ -10,7 +10,6 @@ const sequelize = require("./config/db.js");
 const errorHandler = require("./middlewares/error.js");
 const { checkAuth } = require("./middlewares/auth.js");
 const createSocketIoServer = require("./socket.js");
-const checkRole = require("./middlewares/check-role.js");
 const BookingJob = require("./utils/cron-job.js");
 
 const authRoutes = require("./routes/auth.routes.js");
@@ -50,7 +49,7 @@ app.use("/api/translators", translatorRoutes);
 app.use("/api/chats", checkAuth, chatRoutes);
 app.use("/api/users", checkAuth, userRoutes);
 app.use("/api/guides", guideRoutes);
-app.use("/api/customers", checkAuth, checkRole("Customer"), customerRoutes);
+app.use("/api/customers", customerRoutes);
 app.use("/api/live-locations", checkAuth, liveLocationRoutes);
 
 createSocketIoServer(server);

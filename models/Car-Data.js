@@ -37,7 +37,6 @@ const CarData = sequelize.define(
 		},
 		price: {
 			type: DataTypes.MEDIUMINT({ unsigned: true }),
-			allowNull: false,
 		},
 		driver_id: {
 			type: DataTypes.INTEGER,

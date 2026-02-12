@@ -1,4 +1,5 @@
 const CustomError = require("../config/custom-error");
+const sequelize = require("../config/db");
 const Translator = require("../models/Translator");
 const User = require("../models/User");
 const createSearchFilterForProtectors = require("../utils/create-search-filter");
@@ -28,6 +29,51 @@ const getTranslatorsForBooking = async (req, res) => {
 	res.status(200).json({ data: translators });
 };
 
+const getAllTranslatorsForAdmin = async (_req, res) => {
+	const translators = await User.findAll({
+		include: {
+			model: Translator,
+			attributes: [],
+			required: true,
+		},
+		attributes: {
+			exclude: ["password", "role"],
+		},
+	});
+
+	res.status(200).json({ data: translators });
+};
+
+const getTranslatorDetails = async (req, res) => {
+	const { id } = req.params;
+
+	const translator = await Translator.findOne({
+		where: {
+			user_id: id,
+		},
+		attributes: {
+			exclude: ["cv_link", "user_id"],
+		},
+	});
+
+	res.status(200).json({ data: translator });
+};
+
+const getTranslatorCv = async (req, res) => {
+	const { id } = req.params;
+
+	const translator = await Translator.findByPk(id, {
+		attributes: ["cv_link"],
+		raw: true,
+	});
+
+	if (!translator) {
+		return res.status(404).json({ message: "Translator Not Found" });
+	}
+
+	res.download(translator.cv_link, "cv");
+};
+
 const fillTranslatorData = async (req, res) => {
 	const { gender, age, languages, user_id } = req.body || {};
 
@@ -42,48 +88,77 @@ const fillTranslatorData = async (req, res) => {
 		throw new CustomError("Please fill all fields", 400);
 	}
 
-	await Translator.create({
-		gender,
-		age,
-		languages: languages,
-		cv_link: req.files.cv[0].path,
-		image_link: req.files.image[0].path,
-		user_id,
+	await sequelize.transaction(async (transaction) => {
+		await Translator.create(
+			{
+				gender,
+				age,
+				languages: languages,
+				cv_link: req.files.cv[0].path,
+				user_id,
+			},
+			{
+				transaction,
+			},
+		);
+
+		await User.update(
+			{
+				image_link: req.files.image[0].path,
+			},
+			{
+				where: {
+					id: user_id,
+				},
+				transaction,
+			},
+		);
 	});
 
 	res.status(201).json({ message: "Translator created successfully" });
 };
 
-const changeTranslatorStatus = async (req, res) => {
-	const { translator_id, status } = req.body;
+const changeTranslatorStatusOrPrice = async (req, res) => {
+	const { translator_id, status, price } = req.body;
 
-	if (!translator_id || !status) {
-		return res.status(400).json({ message: "Please fill all fields" });
+	if (!translator_id) {
+		return res.status(400).json({ message: "translator_id is required" });
 	}
 
-	const translator = await Translator.findByPk(translator_id, {});
+	const translator = await Translator.findByPk(translator_id, {
+		attributes: ["id"],
+		raw: true,
+	});
 
 	if (!translator) {
 		return res.status(404).json({ message: "Translator not found" });
 	}
 
-	await Translator.update(
-		{
-			status,
+	const updatedData = {};
+
+	if (price) {
+		updatedData.price = price;
+	}
+
+	if (status) {
+		updatedData.status = status;
+	}
+
+	await Translator.update(updatedData, {
+		where: {
+			id: translator_id,
 		},
-		{
-			where: {
-				id: translator_id,
-			},
-		},
-	);
+	});
 	res.status(200).json({
-		message: "Translator status updated successfully",
+		message: "Translator data updated successfully",
 	});
 };
 
 module.exports = {
 	getTranslatorsForBooking,
+	getAllTranslatorsForAdmin,
+	getTranslatorDetails,
+	getTranslatorCv,
 	fillTranslatorData,
-	changeTranslatorStatus,
+	changeTranslatorStatusOrPrice,
 };

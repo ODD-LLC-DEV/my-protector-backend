@@ -1,8 +1,11 @@
 const { Router } = require("express");
 const {
 	getTranslatorsForBooking,
+	getAllTranslatorsForAdmin,
+	getTranslatorDetails,
+	getTranslatorCv,
 	fillTranslatorData,
-	changeTranslatorStatus,
+	changeTranslatorStatusOrPrice,
 } = require("../controllers/translator.conrollers");
 const configMulter = require("../config/multer");
 const uploadMiddleware = require("../middlewares/upload");
@@ -12,6 +15,12 @@ const checkRole = require("../middlewares/check-role");
 const router = Router();
 
 const multer = configMulter("translator-files", "pdf");
+
+router.get("/", getAllTranslatorsForAdmin);
+
+router.get("/by-id/:id", getTranslatorDetails);
+
+router.get("/:id/cv", getTranslatorCv);
 
 router.get("/for-booking", getTranslatorsForBooking);
 
@@ -26,6 +35,6 @@ router.post(
 	fillTranslatorData,
 );
 
-router.patch("/status", checkAuth, checkRole("ADMIN"), changeTranslatorStatus);
+router.patch("/", checkAuth, checkRole("ADMIN"), changeTranslatorStatusOrPrice);
 
 module.exports = router;

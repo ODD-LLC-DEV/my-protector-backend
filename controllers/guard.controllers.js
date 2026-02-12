@@ -86,6 +86,37 @@ const getGuardVideo = async (req, res) => {
 	}
 };
 
+const getAllGuardsForAdmin = async (_req, res) => {
+	const guards = await User.findAll({
+		attributes: {
+			exclude: ["password", "role"],
+		},
+		include: {
+			model: Guard,
+			attributes: [],
+			required: true,
+		},
+	});
+
+	res.status(200).json({ data: guards });
+};
+
+const getGuardDetails = async (req, res) => {
+	const { id } = req.params;
+
+	const guard = await Guard.findOne({
+		attributes: {
+			exclude: ["user_id", "video_link"],
+		},
+		raw: true,
+		where: {
+			user_id: id,
+		},
+	});
+
+	res.status(200).json({ data: guard });
+};
+
 const fillGuardData = async (req, res) => {
 	const { gender, age, weight, height, skills, user_id } = req.body;
 
@@ -115,11 +146,11 @@ const fillGuardData = async (req, res) => {
 	});
 };
 
-const changeGuardStatus = async (req, res) => {
-	const { guard_id, status } = req.body;
+const changeGuardStatusOrPrice = async (req, res) => {
+	const { guard_id, status, price } = req.body;
 
-	if (!guard_id || !status) {
-		return res.status(400).json({ message: "Please fill all fields" });
+	if (!guard_id) {
+		return res.status(400).json({ message: "guard id is required" });
 	}
 
 	const guard = await Guard.findByPk(guard_id, {
@@ -131,24 +162,32 @@ const changeGuardStatus = async (req, res) => {
 		return res.status(404).json({ message: "Guard not found" });
 	}
 
-	await Guard.update(
-		{
-			status,
+	const updatedData = {};
+
+	if (status) {
+		updatedData.status = status;
+	}
+
+	if (price) {
+		updatedData.price = price;
+	}
+
+	await Guard.update(updatedData, {
+		where: {
+			id: guard_id,
 		},
-		{
-			where: {
-				id: guard_id,
-			},
-		},
-	);
+	});
+
 	res.status(200).json({
-		message: "Guard status updated successfully",
+		message: "Guard Data updated successfully",
 	});
 };
 
 module.exports = {
 	getGuardsForBooking,
 	getGuardVideo,
+	getAllGuardsForAdmin,
+	getGuardDetails,
 	fillGuardData,
-	changeGuardStatus,
+	changeGuardStatusOrPrice,
 };
