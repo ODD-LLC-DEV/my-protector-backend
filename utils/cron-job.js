@@ -76,7 +76,7 @@ class BookingJob {
 		});
 
 		for (const job of jobs) {
-			await this.init(job.cron_date, job.booking_id, undefined);
+			await this.init(job.job_date, job.booking_id, undefined);
 		}
 	}
 }
