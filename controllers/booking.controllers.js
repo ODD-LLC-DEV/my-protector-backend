@@ -123,38 +123,50 @@ const getProtecteesOfBookingForAdmin = async (req, res) => {
 		where: {
 			id,
 		},
-		attributes: ["id"],
+		attributes: [],
 		include: [
 			{
 				model: Guard,
-				attributes: [],
+				attributes: ["id"],
 				include: {
 					model: User,
 					attributes: ["name", "image_link"],
+				},
+				through: {
+					attributes: [],
 				},
 			},
 			{
 				model: Translator,
-				attributes: [],
+				attributes: ["id"],
 				include: {
 					model: User,
 					attributes: ["name", "image_link"],
+				},
+				through: {
+					attributes: [],
 				},
 			},
 			{
 				model: Guide,
-				attributes: [],
+				attributes: ["id"],
 				include: {
 					model: User,
 					attributes: ["name", "image_link"],
 				},
+				through: {
+					attributes: [],
+				},
 			},
 			{
 				model: Driver,
-				attributes: [],
+				attributes: ["id"],
 				include: {
 					model: User,
 					attributes: ["name", "image_link"],
+				},
+				through: {
+					attributes: [],
 				},
 			},
 		],
