@@ -11,7 +11,7 @@ const router = Router();
 
 router.get("/users/:user_id", getUserBookingsForAdmin);
 
-router.get("/details/:id/proctectees", getProtecteesOfBookingForAdmin);
+router.get("/details/:id/protectees", getProtecteesOfBookingForAdmin);
 
 router.get("/customer", getBookingsForCustomer);
 

@@ -123,7 +123,7 @@ const getProtecteesOfBookingForAdmin = async (req, res) => {
 		where: {
 			id,
 		},
-		attributes: [],
+		attributes: ["id"],
 		include: [
 			{
 				model: Guard,
