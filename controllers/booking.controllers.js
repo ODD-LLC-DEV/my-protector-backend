@@ -116,12 +116,59 @@ const getBookingsForProtector = async (req, res) => {
 	res.status(200).json({ data: guard ? guard.Bookings : [] });
 };
 
-const getUserBookingsForAdmin = async (req, res) => {
+const getProtecteesOfBookingForAdmin = async (req, res) => {
 	const { id } = req.params;
+
+	const booking = await Booking.findOne({
+		where: {
+			id,
+		},
+		attributes: [],
+		include: [
+			{
+				model: Guard,
+				attributes: [],
+				include: {
+					model: User,
+					attributes: ["name", "image_link"],
+				},
+			},
+			{
+				model: Translator,
+				attributes: [],
+				include: {
+					model: User,
+					attributes: ["name", "image_link"],
+				},
+			},
+			{
+				model: Guide,
+				attributes: [],
+				include: {
+					model: User,
+					attributes: ["name", "image_link"],
+				},
+			},
+			{
+				model: Driver,
+				attributes: [],
+				include: {
+					model: User,
+					attributes: ["name", "image_link"],
+				},
+			},
+		],
+	});
+
+	res.status(200).json({ data: booking });
+};
+
+const getUserBookingsForAdmin = async (req, res) => {
+	const { user_id } = req.params;
 
 	const bookings = await Booking.findAll({
 		where: {
-			user_id: id,
+			user_id: user_id,
 		},
 		attributes: {
 			exclude: ["user_id"],
@@ -247,5 +294,6 @@ module.exports = {
 	getBookingsForCustomer,
 	getBookingsForProtector,
 	getUserBookingsForAdmin,
+	getProtecteesOfBookingForAdmin,
 	makeBooking,
 };
