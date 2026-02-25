@@ -172,6 +172,18 @@ const getProtecteesOfBookingForAdmin = async (req, res) => {
 		],
 	});
 
+	if (!booking) {
+		return res.status(404).json({ message: "Booking Not Found" });
+	}
+
+	for (const key of Object.keys(booking)) {
+		// keys are Guards, Translators, Guides, Guides
+
+		if (booking[`${key}`].length === 0) {
+			booking.setDataValue(`${key}`, undefined);
+		}
+	}
+
 	res.status(200).json({ data: booking });
 };
 
